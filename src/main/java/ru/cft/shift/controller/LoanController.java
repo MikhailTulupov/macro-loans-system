@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.cft.shift.dto.LoanDTO;
-import ru.cft.shift.model.LoanEntity;
 import ru.cft.shift.service.LoanService;
 import ru.cft.shift.service.UserService;
 
@@ -55,6 +54,18 @@ public class LoanController {
     ){
         try{
             return ResponseEntity.ok(loanService.payDebtOff(loanId, userId, sum));
+        }catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/user/loan/{id}")
+    public ResponseEntity<LoanDTO> getCurrentLoan(
+            @PathVariable(name = "id") Long loanId,
+            @RequestParam(name = "user_id") Long userId
+    ){
+        try {
+            return ResponseEntity.ok(loanService.getUserLoanById(loanId, userId));
         }catch (Exception e){
             return ResponseEntity.badRequest().build();
         }

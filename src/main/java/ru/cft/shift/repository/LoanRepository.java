@@ -14,9 +14,12 @@ import java.util.Optional;
 public interface LoanRepository extends JpaRepository<LoanEntity, Long>{
     List<LoanEntity> findAllByUserId(Long id);
 
-    Optional<LoanEntity> findByIdAndUserId(Long loanId, Long id);
-
     @Modifying
-    @Query(value = "update loans set debt = (debt - ?3) where id = ?1 and user_id = ?2", nativeQuery = true)
-    void setDebtSumByUserId(Long loanId, Long userId, BigDecimal sum);
+    @Query(value = "update loans set debt = (debt - ?3) where id = ?1 and user_id = ?2;" +
+            " select * from loans where id = ?1 and user_id = ?2", nativeQuery = true)
+    LoanEntity setDebtSumByUserId(Long loanId, Long userId, BigDecimal sum);
+
+    @Query(value = "select * from loans where id = ?1 and user_id = ?2", nativeQuery = true)
+    Optional<LoanEntity> getUserLoanById(Long loanId, Long userId);
+
 }
