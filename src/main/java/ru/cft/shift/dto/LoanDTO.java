@@ -18,7 +18,13 @@ import java.time.Instant;
 @NoArgsConstructor
 public class LoanDTO {
     @NotNull
+    private Long id;
+
+    @NotNull
     private BigDecimal debt;
+
+    @NotNull
+    private Instant receiving;
 
     @NotNull
     private Instant maturity;
@@ -29,7 +35,9 @@ public class LoanDTO {
         }
 
         return new LoanDTO()
+                .setId(loanEntity.getId())
                 .setDebt(loanEntity.getDebt())
+                .setReceiving(loanEntity.getDateOfReceive())
                 .setMaturity(loanEntity.getMaturity());
     }
 }

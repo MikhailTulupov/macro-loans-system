@@ -18,7 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class UserDTO {
     @NotNull
-    private UUID id;
+    private Long id;
 
     @NotNull
     private String surname;

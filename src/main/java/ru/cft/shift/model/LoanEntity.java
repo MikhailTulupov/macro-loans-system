@@ -20,7 +20,7 @@ import java.util.UUID;
 public class LoanEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id;
+    private Long id;
 
     @Column(name = "debt", precision = 10, scale = 2, nullable = false)
     private BigDecimal debt;
