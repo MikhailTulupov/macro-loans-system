@@ -22,4 +22,5 @@ public interface LoanRepository extends JpaRepository<LoanEntity, Long>{
     @Query(value = "select * from loans where id = ?1 and user_id = ?2", nativeQuery = true)
     Optional<LoanEntity> getUserLoanById(Long loanId, Long userId);
 
+    boolean existsById(Long id);
 }

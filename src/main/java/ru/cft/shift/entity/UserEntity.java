@@ -20,19 +20,19 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, precision = 20)
     private String email;
 
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "surname", nullable = false)
+    @Column(name = "surname", nullable = false, precision = 50)
     private String surname;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, precision = 30)
     private String name;
 
-    @Column(name = "patronymic", nullable = false)
+    @Column(name = "patronymic", nullable = false, precision = 70)
     private String patronymic;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)

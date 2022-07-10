@@ -17,6 +17,16 @@ public class BalanceService {
     private final BalanceRepository balanceRepository;
 
     @Transactional
+    public BigDecimal getUserBalanceValue(){
+        BalanceEntity balance = balanceRepository.findByUserEmail(SecurityContextHelper.email()).orElse(null);
+        if(balance == null){
+            return null;
+        }
+
+        return balance.getFunds();
+    }
+
+    @Transactional
     public BigDecimal changeUserBalance(BigDecimal sum){
         BalanceEntity balance = balanceRepository.findByUserEmail(SecurityContextHelper.email()).orElse(null);
         if(balance == null){

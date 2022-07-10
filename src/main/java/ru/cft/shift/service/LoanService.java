@@ -31,4 +31,14 @@ public class LoanService {
         return LoanDTO.getFromEntity(loanRepository.getUserLoanById(loanId, userId).orElse(null));
     }
 
+    @Transactional
+    public Boolean deleteLoanById(Long loanId){
+        if(!loanRepository.existsById(loanId)){
+            return false;
+        }
+
+        loanRepository.deleteById(loanId);
+        return true;
+    }
+
 }

@@ -2,11 +2,9 @@ package ru.cft.shift.controller;
 
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.cft.shift.service.BalanceService;
 
 import java.math.BigDecimal;
@@ -17,6 +15,17 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class BalanceController {
     private final BalanceService balanceService;
+
+    @GetMapping("/user")
+    public ResponseEntity<BigDecimal> getUserBalanceValue(){
+        BigDecimal balance = balanceService.getUserBalanceValue();
+
+        if(balance == null){
+            return new ResponseEntity<>(BigDecimal.ZERO, HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(balance);
+    }
 
     @PutMapping("/user/change")
     public ResponseEntity<BigDecimal> changeUserBalance(

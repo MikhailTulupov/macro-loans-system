@@ -54,4 +54,14 @@ public class UserService {
             throw new EmailAlreadyRegisteredException();
         }
     }
+
+    @Transactional
+    public Boolean deleteUser(){
+        if(!userRepository.existsByEmail(SecurityContextHelper.email())){
+            return false;
+        }
+
+        userRepository.deleteByEmail(SecurityContextHelper.email());
+        return true;
+    }
 }

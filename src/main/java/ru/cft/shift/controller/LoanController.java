@@ -2,6 +2,7 @@ package ru.cft.shift.controller;
 
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.cft.shift.dto.LoanDTO;
@@ -65,6 +66,17 @@ public class LoanController {
             return ResponseEntity.ok(loanService.getUserLoanById(loanId, userService.getCurrentUser().getId()));
         }catch (Exception e){
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteLoan(
+            @PathVariable(name = "id") Long loanId
+    ){
+        if(!loanService.deleteLoanById(loanId)){
+            return new ResponseEntity<>("Failed to delete loan", HttpStatus.BAD_REQUEST);
+        }else {
+            return ResponseEntity.ok("Deleted");
         }
     }
 

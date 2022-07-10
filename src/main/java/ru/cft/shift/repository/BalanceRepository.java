@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface BalanceRepository extends JpaRepository<BalanceEntity, Long> {
     Optional<BalanceEntity> findByUserEmail(String email);
+
+
 }
