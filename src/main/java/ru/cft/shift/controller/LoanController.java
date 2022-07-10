@@ -32,7 +32,7 @@ public class LoanController {
         }
     }
 
-    @PostMapping("/user")
+    @PostMapping("/user/apply")
     public ResponseEntity<LoanDTO> applyForLoan(
             @RequestParam(name = "debt") BigDecimal debt,
             @RequestParam(name = "maturity")Instant maturity,
