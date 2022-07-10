@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface PassportRepository extends JpaRepository<PassportEntity, Long> {
     boolean existsBySeriesAndNumber(String series, String number);
+
+    boolean existsByUserEmail(String email);
 }

@@ -39,6 +39,11 @@ public class PassportService {
         }
     }
 
+    @Transactional
+    public boolean isUserHasPassportData(){
+        return passportRepository.existsByUserEmail(SecurityContextHelper.email());
+    }
+
     private void checkUserAge(String series, String number) throws SmallAgeException {
         //TODO:how exactly we should check this?
     }
