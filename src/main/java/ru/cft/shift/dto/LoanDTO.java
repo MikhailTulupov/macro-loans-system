@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import ru.cft.shift.model.LoanEntity;
+import ru.cft.shift.entity.LoanEntity;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;

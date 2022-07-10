@@ -5,11 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import ru.cft.shift.model.UserEntity;
+import ru.cft.shift.entity.UserEntity;
 
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -21,6 +19,9 @@ public class UserDTO {
     private Long id;
 
     @NotNull
+    private String email;
+
+    @NotNull
     private String surname;
 
     @NotNull
@@ -29,8 +30,6 @@ public class UserDTO {
     @NotNull
     private String patronymic;
 
-    @NotNull
-    private BigDecimal funds;
 
     public static UserDTO getFromEntity(UserEntity user){
         if(user == null){
@@ -42,6 +41,6 @@ public class UserDTO {
                 .setSurname(user.getSurname())
                 .setName(user.getName())
                 .setPatronymic(user.getPatronymic())
-                .setFunds(user.getFunds());
+                .setEmail(user.getEmail());
     }
 }

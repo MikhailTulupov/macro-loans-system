@@ -34,38 +34,35 @@ public class LoanController {
 
     @PostMapping("/user")
     public ResponseEntity<LoanDTO> applyForLoan(
-            @RequestParam(name = "user_id") Long user_id,
             @RequestParam(name = "debt") BigDecimal debt,
             @RequestParam(name = "maturity")Instant maturity,
             @RequestParam(name = "rate") BigDecimal interestRate
             ){
         try{
-            return ResponseEntity.ok(userService.addLoan(user_id, debt, maturity, interestRate));
+            return ResponseEntity.ok(userService.addLoan(debt, maturity, interestRate));
         }catch (Exception e){
             return ResponseEntity.badRequest().build();
         }
     }
 
-    @PutMapping("/user/pay")
+    @PutMapping("/pay/{id}")
     public ResponseEntity<LoanDTO> payTheDebtOff(
-            @RequestParam(name = "loan_id") Long loanId,
-            @RequestParam(name = "user_id") Long userId,
+            @PathVariable(name = "id") Long loanId,
             @RequestParam(name = "sum") BigDecimal sum
     ){
         try{
-            return ResponseEntity.ok(loanService.payDebtOff(loanId, userId, sum));
+            return ResponseEntity.ok(loanService.payDebtOff(loanId, userService.getCurrentUser().getId(), sum));
         }catch (Exception e){
             return ResponseEntity.badRequest().build();
         }
     }
 
-    @GetMapping("/user/loan/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<LoanDTO> getCurrentLoan(
-            @PathVariable(name = "id") Long loanId,
-            @RequestParam(name = "user_id") Long userId
+            @PathVariable(name = "id") Long loanId
     ){
         try {
-            return ResponseEntity.ok(loanService.getUserLoanById(loanId, userId));
+            return ResponseEntity.ok(loanService.getUserLoanById(loanId, userService.getCurrentUser().getId()));
         }catch (Exception e){
             return ResponseEntity.badRequest().build();
         }

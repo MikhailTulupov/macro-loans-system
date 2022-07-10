@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.cft.shift.dto.UserDTO;
+import ru.cft.shift.exception.EmailAlreadyRegisteredException;
 import ru.cft.shift.service.UserService;
+import ru.cft.shift.utils.SecurityContextHelper;
 
 import java.math.BigDecimal;
 
@@ -19,42 +21,23 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(
+            @RequestParam(name = "email") String email,
+            @RequestParam(name = "password") String password,
             @RequestParam(name = "surname") String surname,
             @RequestParam(name = "name") String name,
-            @RequestParam(name = "patronymic") String patronymic,
-            @RequestParam(name = "passport_series") String passportSeries,
-            @RequestParam(name = "passport_number") String passportNumber
-    ){
-        try {
-            return ResponseEntity.ok(userService.createUser(surname, name, patronymic, passportSeries, passportNumber));
-        }
-        catch (Exception e){
-            return ResponseEntity.badRequest().build();
-        }
+            @RequestParam(name = "patronymic") String patronymic
+    )throws EmailAlreadyRegisteredException {
+            return ResponseEntity.ok(userService.createUser(email, password, surname, name, patronymic));
     }
 
-    @GetMapping
-    public ResponseEntity<UserDTO> getCurrentUser(
-            @RequestParam(name = "user_id") Long userId){
-        try {
-            return ResponseEntity.ok(userService.getCurrentUser(userId));
-        }
-        catch (Exception e){
-            return ResponseEntity.badRequest().build();
-        }
+    @GetMapping("/account")
+    public ResponseEntity<UserDTO> getCurrentUser() {
+        return ResponseEntity.ok(userService.getCurrentUser());
     }
 
-    @PutMapping("/funds")
-    public ResponseEntity<UserDTO> changeUserFunds(
-            @RequestParam(name = "user_id") Long userId,
-            @RequestParam(name = "sum")BigDecimal sum
-            ){
-        try {
-            return ResponseEntity.ok(userService.changeFunds(userId, sum));
-        }
-        catch (Exception e){
-            return ResponseEntity.badRequest().build();
-        }
+    @PostMapping("/logout")
+    public void logout() {
+        SecurityContextHelper.setNotAuthenticated();
     }
 
 

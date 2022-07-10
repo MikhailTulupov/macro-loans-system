@@ -1,4 +1,4 @@
-package ru.cft.shift.model;
+package ru.cft.shift.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -6,7 +6,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.Set;
 
 @Entity
@@ -21,6 +20,12 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @Column(name = "password", nullable = false)
+    private String password;
+
     @Column(name = "surname", nullable = false)
     private String surname;
 
@@ -30,24 +35,22 @@ public class UserEntity {
     @Column(name = "patronymic", nullable = false)
     private String patronymic;
 
-    @Column(name = "funds", precision = 10, scale = 2)
-    private BigDecimal funds;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private PassportEntity passport;
 
-    @Column(name = "passport_series", nullable = false)
-    private String passportSeries;
-
-    @Column(name = "passport_number", nullable = false)
-    private String passportNumber;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private BalanceEntity balance;
 
     @OneToMany(mappedBy = "user")
     private Set<LoanEntity> loans;
 
-    public UserEntity(String surname, String name, String patronymic, String passportSeries, String passportNumber) {
+    public UserEntity(String email, String password, String surname, String name, String patronymic) {
+        this.email = email;
+        this.password = password;
         this.surname = surname;
         this.name = name;
         this.patronymic = patronymic;
-        this.passportSeries = passportSeries;
-        this.passportNumber = passportNumber;
-        this.funds = new BigDecimal("0.00");
     }
 }
