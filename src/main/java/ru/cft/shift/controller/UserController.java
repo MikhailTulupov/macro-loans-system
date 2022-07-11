@@ -7,6 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.cft.shift.dto.UserDTO;
 import ru.cft.shift.exception.EmailAlreadyRegisteredException;
+import ru.cft.shift.exception.IncorrectPassportException;
+import ru.cft.shift.exception.PassportAlreadyRegisteredException;
+import ru.cft.shift.exception.SmallAgeException;
 import ru.cft.shift.service.UserService;
 import ru.cft.shift.utils.SecurityContextHelper;
 
@@ -24,9 +27,24 @@ public class UserController {
             @RequestParam(name = "password") String password,
             @RequestParam(name = "surname") String surname,
             @RequestParam(name = "name") String name,
-            @RequestParam(name = "patronymic") String patronymic
-    )throws EmailAlreadyRegisteredException {
-            return ResponseEntity.ok(userService.createUser(email, password, surname, name, patronymic));
+            @RequestParam(name = "patronymic") String patronymic,
+            @RequestParam(name = "passportSeries") String passportSeries,
+            @RequestParam(name = "passportNumber") String passportNumber
+    ) throws
+            EmailAlreadyRegisteredException,
+            SmallAgeException,
+            IncorrectPassportException,
+            PassportAlreadyRegisteredException
+    {
+            return ResponseEntity.ok(
+                    userService.createUser(
+                            email,
+                            password,
+                            surname,
+                            name,
+                            patronymic,
+                            passportSeries,
+                            passportNumber));
     }
 
     @GetMapping("/account")

@@ -5,8 +5,13 @@ import org.springframework.stereotype.Service;
 import ru.cft.shift.dto.LoanDTO;
 import ru.cft.shift.dto.UserDTO;
 import ru.cft.shift.entity.LoanEntity;
+import ru.cft.shift.entity.PassportEntity;
 import ru.cft.shift.entity.UserEntity;
 import ru.cft.shift.exception.EmailAlreadyRegisteredException;
+import ru.cft.shift.exception.IncorrectPassportException;
+import ru.cft.shift.exception.PassportAlreadyRegisteredException;
+import ru.cft.shift.exception.SmallAgeException;
+import ru.cft.shift.repository.PassportRepository;
 import ru.cft.shift.repository.UserRepository;
 import ru.cft.shift.utils.SecurityContextHelper;
 
@@ -19,6 +24,7 @@ import java.time.Instant;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PassportRepository passportRepository;
 
     @Transactional
     public UserDTO createUser(
@@ -26,9 +32,29 @@ public class UserService {
             String password,
             String surname,
             String name,
-            String patronymic) throws EmailAlreadyRegisteredException{
+            String patronymic,
+            String passportSeries,
+            String passportNumber)
+            throws
+            EmailAlreadyRegisteredException,
+            PassportAlreadyRegisteredException,
+            SmallAgeException,
+            IncorrectPassportException
+    {
         checkEmailIsFree(email);
         UserEntity user = userRepository.save(new UserEntity(email, password, surname, name, patronymic));
+        checkIsPassportDataFree(passportSeries, passportNumber);
+        checkUserAge(passportSeries, passportNumber);
+        checkPassportDataExist(passportSeries, passportNumber);
+
+        userRepository.findByEmail(SecurityContextHelper.email()).ifPresent(
+                currentUser->currentUser
+                        .setPassport(new PassportEntity()
+                                .setSeries(passportSeries)
+                                .setNumber(passportNumber)
+                                .setId(currentUser.getId())
+                                .setUser(currentUser)));
+
         return UserDTO.getFromEntity(user);
     }
 
@@ -63,5 +89,19 @@ public class UserService {
 
         userRepository.deleteByEmail(SecurityContextHelper.email());
         return true;
+    }
+
+    private void checkUserAge(String series, String number) throws SmallAgeException {
+        //TODO:how exactly we should check this?
+    }
+
+    private void checkPassportDataExist(String series, String number) throws IncorrectPassportException {
+        //TODO:how exactly we should check k this?
+    }
+
+    private void checkIsPassportDataFree(String series, String number) throws PassportAlreadyRegisteredException {
+        if(passportRepository.existsBySeriesAndNumber(series, number)){
+            throw new PassportAlreadyRegisteredException();
+        }
     }
 }
