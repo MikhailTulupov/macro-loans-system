@@ -14,10 +14,6 @@ import java.math.BigDecimal;
 public class PromoCodeService {
     private final PromoCodeRepository promoCodeRepository;
 
-    private boolean validateCode(String codeValue){
-        return promoCodeRepository.existsByValue(codeValue);
-    }
-
     @Transactional
     public void registerCode(String codeValue, BigDecimal sum){
         promoCodeRepository.registerCode(codeValue, sum);
