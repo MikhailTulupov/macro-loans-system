@@ -16,10 +16,10 @@ public interface LoanRepository extends JpaRepository<LoanEntity, Long>{
     List<LoanEntity> findAllByUserId(Long userId);
 
     @Modifying
-    @Query(value = "update loans set debt = (debt - ?3) where id = ?1 and user_id = ?2; select * from loans where id = ?1 and user_id = ?2", nativeQuery = true)
+    @Query(value = "update loans set debt = (debt - ?3) where id = ?1 and user_id = ?2; select * from loans where id = ?1 and user_id = ?2 limit 1", nativeQuery = true)
     LoanEntity setDebtSumByUserId(Long loanId, Long userId, BigDecimal sum);
 
-    @Query(value = "select * from loans where id = ?1 and user_id = ?2", nativeQuery = true)
+    @Query(value = "select * from loans where id = ?1 and user_id = ?2 limit 1", nativeQuery = true)
     Optional<LoanEntity> getUserLoanById(Long loanId, Long userId);
 
     boolean existsById(Long id);
