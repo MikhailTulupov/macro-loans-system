@@ -33,7 +33,6 @@ public class PassportService {
                                 .setUser(currentUser)));
     }
 
-    //TODO:не учитывается отсутствие паспортных данных в БД, нужно пофиксить
     private void checkIsPassportDataFree(String series, String number) throws PassportAlreadyRegisteredException{
         if(passportRepository.existsBySeriesAndNumber(series, number)){
             throw new PassportAlreadyRegisteredException();
