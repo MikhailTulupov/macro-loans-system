@@ -9,7 +9,7 @@ public class SecurityContextHelper {
     }
 
     public static void setNotAuthenticated() {
-        SecurityContextHolder.getContext().setAuthentication(null);
+        SecurityContextHolder.clearContext();
     }
 
     public static void setAuthenticated(Authentication auth){

@@ -2,6 +2,7 @@ package ru.cft.shift.controller;
 
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,8 +54,9 @@ public class AuthController {
     }
 
     @PostMapping("/sing-out")
-    public void logout() {
+    public ResponseEntity<?> logout() {
         SecurityContextHelper.setNotAuthenticated();
+        return ResponseEntity.ok().body("You've been singed out!");
     }
 
     @PostMapping("/sing-in")
