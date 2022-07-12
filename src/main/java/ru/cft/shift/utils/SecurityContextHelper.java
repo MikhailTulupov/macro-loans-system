@@ -1,5 +1,6 @@
 package ru.cft.shift.utils;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityContextHelper {
@@ -9,6 +10,10 @@ public class SecurityContextHelper {
 
     public static void setNotAuthenticated() {
         SecurityContextHolder.getContext().setAuthentication(null);
+    }
+
+    public static void setAuthenticated(Authentication auth){
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
     private SecurityContextHelper(){}

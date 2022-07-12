@@ -24,9 +24,9 @@ public class PassportEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @Column(name = "series", nullable = false)
+    @Column(name = "series")
     private String series;
 
-    @Column(name = "number", nullable = false)
+    @Column(name = "number")
     private String number;
 }

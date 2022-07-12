@@ -75,6 +75,11 @@ public class UserService {
         return LoanDTO.getFromEntity(loan);
     }
 
+    @Transactional
+    public UserEntity findUserByEmail(String email){
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
     private void checkEmailIsFree(String email) throws EmailAlreadyRegisteredException {
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyRegisteredException();
