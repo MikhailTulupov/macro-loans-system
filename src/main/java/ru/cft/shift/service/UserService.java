@@ -64,7 +64,7 @@ public class UserService {
                         .setBalance(new BalanceEntity()
                                 .setId(currentUser.getId())
                                 .setUser(currentUser)
-                                .setFunds(BigDecimal.ZERO)));
+                                .setFunds(new BigDecimal("0.00"))));
 
         return UserDTO.getFromEntity(user);
     }
