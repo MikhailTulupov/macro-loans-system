@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.cft.shift.dto.LoanDTO;
 import ru.cft.shift.dto.UserDTO;
+import ru.cft.shift.entity.BalanceEntity;
 import ru.cft.shift.entity.LoanEntity;
 import ru.cft.shift.entity.PassportEntity;
 import ru.cft.shift.entity.UserEntity;
@@ -43,17 +44,27 @@ public class UserService {
     {
         checkEmailIsFree(email);
         UserEntity user = userRepository.save(new UserEntity(email, password, surname, name, patronymic));
-        checkIsPassportDataFree(passportSeries, passportNumber);
-        checkUserAge(passportSeries, passportNumber);
-        checkPassportDataExist(passportSeries, passportNumber);
+
+        if(passportNumber != null && passportSeries != null){
+            checkIsPassportDataFree(passportSeries, passportNumber);
+            checkUserAge(passportSeries, passportNumber);
+            checkPassportDataExist(passportSeries, passportNumber);
+
+            userRepository.findByEmail(SecurityContextHelper.email()).ifPresent(
+                    currentUser->currentUser
+                            .setPassport(new PassportEntity()
+                                    .setSeries(passportSeries)
+                                    .setNumber(passportNumber)
+                                    .setId(currentUser.getId())
+                                    .setUser(currentUser)));
+        }
 
         userRepository.findByEmail(SecurityContextHelper.email()).ifPresent(
-                currentUser->currentUser
-                        .setPassport(new PassportEntity()
-                                .setSeries(passportSeries)
-                                .setNumber(passportNumber)
+                currentUser -> currentUser
+                        .setBalance(new BalanceEntity()
                                 .setId(currentUser.getId())
-                                .setUser(currentUser)));
+                                .setUser(currentUser)
+                                .setFunds(BigDecimal.ZERO)));
 
         return UserDTO.getFromEntity(user);
     }
