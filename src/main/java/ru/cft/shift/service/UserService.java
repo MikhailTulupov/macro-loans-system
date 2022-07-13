@@ -14,6 +14,7 @@ import ru.cft.shift.exception.PassportAlreadyRegisteredException;
 import ru.cft.shift.exception.SmallAgeException;
 import ru.cft.shift.repository.PassportRepository;
 import ru.cft.shift.repository.UserRepository;
+import ru.cft.shift.utils.PassportChecker;
 import ru.cft.shift.utils.SecurityContextHelper;
 
 import javax.transaction.Transactional;
@@ -47,8 +48,9 @@ public class UserService {
 
         if(passportNumber != null && passportSeries != null){
             checkIsPassportDataFree(passportSeries, passportNumber);
-            checkUserAge(passportSeries, passportNumber);
-            checkPassportDataExist(passportSeries, passportNumber);
+
+            PassportChecker.checkUserAge(passportSeries, passportNumber);
+            PassportChecker.checkPassportDataExist(passportSeries, passportNumber);
 
             userRepository.findByEmail(SecurityContextHelper.email()).ifPresent(
                     currentUser->currentUser
@@ -98,21 +100,13 @@ public class UserService {
     }
 
     @Transactional
-    public Boolean deleteUser(){
-        if(!userRepository.existsByEmail(SecurityContextHelper.email())){
+    public Boolean deleteUser() {
+        if (!userRepository.existsByEmail(SecurityContextHelper.email())) {
             return false;
         }
 
         userRepository.deleteByEmail(SecurityContextHelper.email());
         return true;
-    }
-
-    private void checkUserAge(String series, String number) throws SmallAgeException {
-        //TODO:how exactly we should check this?
-    }
-
-    private void checkPassportDataExist(String series, String number) throws IncorrectPassportException {
-        //TODO:how exactly we should check k this?
     }
 
     private void checkIsPassportDataFree(String series, String number) throws PassportAlreadyRegisteredException {

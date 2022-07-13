@@ -16,12 +16,12 @@ import ru.cft.shift.service.PassportService;
 public class PassportController {
     private final PassportService passportService;
 
-    @PostMapping("/user")
+    @PutMapping("/user")
     public ResponseEntity<String> setUserPassportData(
             @RequestParam(name = "series") String series,
             @RequestParam(name = "number") String number
     ) throws IncorrectPassportException, PassportAlreadyRegisteredException, SmallAgeException {
-        passportService.setPassportData(series, number);
+        passportService.updatePassportData(series, number);
         return ResponseEntity.ok("Successfully added passport data");
     }
 
