@@ -2,6 +2,7 @@ package ru.cft.shift.controller;
 
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,10 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.cft.shift.dto.UserDTO;
 import ru.cft.shift.entity.UserEntity;
-import ru.cft.shift.exception.EmailAlreadyRegisteredException;
-import ru.cft.shift.exception.IncorrectPassportException;
-import ru.cft.shift.exception.PassportAlreadyRegisteredException;
-import ru.cft.shift.exception.SmallAgeException;
+import ru.cft.shift.exception.*;
 import ru.cft.shift.service.UserService;
 import ru.cft.shift.utils.BcryptGenerator;
 import ru.cft.shift.utils.SecurityContextHelper;
@@ -62,24 +60,24 @@ public class AuthController {
     public ResponseEntity<UserDTO> login(
             @RequestParam(name = "email") String email,
             @RequestParam(name = "password") String password
-    ){
+    ) throws IncorrectLoginOrPasswordException {
 
         UserEntity user = userService.findUserByEmail(email);
         if(user == null){
-            return ResponseEntity.badRequest().body(null);
+            throw new IncorrectLoginOrPasswordException();
         }
 
         String existingPassword = user.getPassword();
 
         if(!BcryptGenerator.passwordDecoder(password, existingPassword)){
-            return ResponseEntity.badRequest().body(null);
+            throw new IncorrectLoginOrPasswordException();
         }
 
         SecurityContextHelper.setAuthenticated(new UsernamePasswordAuthenticationToken(email, password));
 
         UserDTO userDTO = userService.getCurrentUser();
         if(userDTO == null){
-            return ResponseEntity.badRequest().body(null);
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
 
         return ResponseEntity.ok(userDTO);
