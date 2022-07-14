@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.cft.shift.dto.LoanDTO;
+import ru.cft.shift.exception.LoanNotFoundException;
 import ru.cft.shift.exception.UserNotFoundException;
 import ru.cft.shift.service.LoanService;
 import ru.cft.shift.service.UserService;
@@ -34,19 +35,15 @@ public class LoanController {
             @RequestParam(name = "debt") BigDecimal debt,
             @RequestParam(name = "maturity")Instant maturity,
             @RequestParam(name = "rate") BigDecimal interestRate
-            ){
-        try{
-            return ResponseEntity.ok(userService.addLoan(debt, maturity, interestRate));
-        }catch (Exception e){
-            return ResponseEntity.badRequest().build();
-        }
+            ) throws UserNotFoundException {
+            return ResponseEntity.ok(loanService.addLoan(debt, maturity, interestRate));
     }
 
     @PutMapping("/pay/{id}")
     public ResponseEntity<LoanDTO> payTheDebtOff(
             @PathVariable(name = "id") Long loanId,
             @RequestParam(name = "sum") BigDecimal sum
-    ) throws UserNotFoundException {
+    ) throws UserNotFoundException, LoanNotFoundException {
             return ResponseEntity.ok(loanService.payDebtOff(loanId, sum));
     }
 

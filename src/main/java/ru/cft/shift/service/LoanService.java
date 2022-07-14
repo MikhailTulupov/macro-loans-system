@@ -3,7 +3,9 @@ package ru.cft.shift.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.cft.shift.dto.LoanDTO;
+import ru.cft.shift.entity.LoanEntity;
 import ru.cft.shift.entity.UserEntity;
+import ru.cft.shift.exception.LoanNotFoundException;
 import ru.cft.shift.exception.UserNotFoundException;
 import ru.cft.shift.repository.LoanRepository;
 import ru.cft.shift.repository.UserRepository;
@@ -11,6 +13,7 @@ import ru.cft.shift.utils.SecurityContextHelper;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,14 +37,46 @@ public class LoanService {
     }
 
     @Transactional
-    public LoanDTO payDebtOff(Long loanId, BigDecimal sum) throws UserNotFoundException {
+    public LoanDTO addLoan(BigDecimal debt, Instant maturity, BigDecimal interestRate) throws UserNotFoundException {
+
         UserEntity user = userRepository.findByEmail(SecurityContextHelper.email()).orElse(null);
 
         if(user == null){
             throw new UserNotFoundException();
         }
 
-        return LoanDTO.getFromEntity(loanRepository.setDebtSumByUserId(loanId, user.getId(), sum));
+        LoanEntity loan = new LoanEntity()
+                .setId(user.getId())
+                .setUser(user)
+                .setDebt(debt)
+                .setMaturity(maturity)
+                .setInterestRate(interestRate)
+                .setDateOfReceive(Instant.now());
+
+        user.getLoans().add(loan);
+        loanRepository.save(loan);
+
+        return LoanDTO.getFromEntity(loan);
+    }
+
+    @Transactional
+    public LoanDTO payDebtOff(Long loanId, BigDecimal sum) throws UserNotFoundException, LoanNotFoundException {
+        UserEntity user = userRepository.findByEmail(SecurityContextHelper.email()).orElse(null);
+
+        if(user == null){
+            throw new UserNotFoundException();
+        }
+
+        LoanEntity loan = loanRepository.getUserLoanById(loanId, user.getId()).orElse(null);
+        if(loan == null){
+            throw new LoanNotFoundException();
+        }
+
+        loanRepository.setDebtSumByUserId(loanId, user.getId(), sum);
+
+        loan.setDebt(loan.getDebt().subtract(sum));
+
+        return LoanDTO.getFromEntity(loan);
     }
 
     @Transactional

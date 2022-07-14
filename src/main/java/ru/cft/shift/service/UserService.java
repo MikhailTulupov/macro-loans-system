@@ -2,10 +2,8 @@ package ru.cft.shift.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.cft.shift.dto.LoanDTO;
 import ru.cft.shift.dto.UserDTO;
 import ru.cft.shift.entity.BalanceEntity;
-import ru.cft.shift.entity.LoanEntity;
 import ru.cft.shift.entity.PassportEntity;
 import ru.cft.shift.entity.UserEntity;
 import ru.cft.shift.exception.EmailAlreadyRegisteredException;
@@ -19,7 +17,6 @@ import ru.cft.shift.utils.SecurityContextHelper;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -74,18 +71,6 @@ public class UserService {
     @Transactional
     public UserDTO getCurrentUser(){
         return UserDTO.getFromEntity(userRepository.findByEmail(SecurityContextHelper.email()).orElse(null));
-    }
-
-    @Transactional
-    public LoanDTO addLoan(BigDecimal debt, Instant maturity, BigDecimal interestRate){
-        LoanEntity loan = new LoanEntity()
-                .setDebt(debt)
-                .setMaturity(maturity)
-                .setInterestRate(interestRate)
-                .setDateOfReceive(Instant.now());
-
-        userRepository.findByEmail(SecurityContextHelper.email()).ifPresent(currentUser -> currentUser.getLoans().add(loan));
-        return LoanDTO.getFromEntity(loan);
     }
 
     @Transactional

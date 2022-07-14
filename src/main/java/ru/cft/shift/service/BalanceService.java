@@ -33,7 +33,7 @@ public class BalanceService {
         }
 
         if(sum.compareTo(BigDecimal.ZERO) < 0){
-            if(sum.compareTo(balance.getFunds()) > 0){
+            if(sum.abs().compareTo(balance.getFunds()) > 0){
                 throw new NotEnoughFundsException();
             }
         }

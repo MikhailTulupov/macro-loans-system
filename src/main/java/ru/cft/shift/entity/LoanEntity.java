@@ -30,8 +30,7 @@ public class LoanEntity {
     @Column(name = "maturity", nullable = false)
     private Instant maturity;
 
-    @Column(name = "interest_rate", precision = 2, scale = 2, nullable = false)
-    @Size(min = 0, max = 100)
+    @Column(name = "interest_rate", precision = 4, scale = 2, nullable = false)
     private BigDecimal interestRate;
 
     @ManyToOne
