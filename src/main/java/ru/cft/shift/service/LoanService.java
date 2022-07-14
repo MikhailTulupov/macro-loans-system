@@ -6,6 +6,7 @@ import ru.cft.shift.dto.LoanDTO;
 import ru.cft.shift.entity.LoanEntity;
 import ru.cft.shift.entity.UserEntity;
 import ru.cft.shift.exception.LoanNotFoundException;
+import ru.cft.shift.exception.NotEnoughFundsException;
 import ru.cft.shift.exception.UserNotFoundException;
 import ru.cft.shift.repository.BalanceRepository;
 import ru.cft.shift.repository.LoanRepository;
@@ -63,7 +64,7 @@ public class LoanService {
     }
 
     @Transactional
-    public LoanDTO payDebtOff(Long loanId, BigDecimal sum) throws UserNotFoundException, LoanNotFoundException {
+    public LoanDTO payDebtOff(Long loanId, BigDecimal sum) throws UserNotFoundException, LoanNotFoundException, NotEnoughFundsException {
         UserEntity user = userRepository.findByEmail(SecurityContextHelper.email()).orElse(null);
 
         if(user == null){
@@ -73,6 +74,11 @@ public class LoanService {
         LoanEntity loan = loanRepository.getUserLoanById(loanId, user.getId()).orElse(null);
         if(loan == null){
             throw new LoanNotFoundException();
+        }
+
+
+        if (sum.abs().compareTo(user.getBalance().getFunds()) > 0) {
+            throw new NotEnoughFundsException();
         }
 
         user.getBalance().setFunds(user.getBalance().getFunds().subtract(sum));
