@@ -27,8 +27,6 @@ public class UserService {
 
     private final PassportRepository passportRepository;
 
-    private final BalanceRepository balanceRepository;
-
     @Transactional
     public UserDTO createUser(
             String email,

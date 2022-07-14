@@ -28,8 +28,6 @@ public class LoanService {
 
     private final UserRepository userRepository;
 
-    private final BalanceRepository balanceRepository;
-
     @Transactional
     public List<LoanDTO> getUserLoans() throws UserNotFoundException {
         UserEntity user = userRepository.findByEmail(SecurityContextHelper.email()).orElse(null);
