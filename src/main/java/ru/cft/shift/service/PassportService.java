@@ -3,9 +3,11 @@ package ru.cft.shift.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.cft.shift.entity.PassportEntity;
+import ru.cft.shift.entity.UserEntity;
 import ru.cft.shift.exception.IncorrectPassportException;
 import ru.cft.shift.exception.PassportAlreadyRegisteredException;
 import ru.cft.shift.exception.SmallAgeException;
+import ru.cft.shift.exception.UserNotFoundException;
 import ru.cft.shift.repository.PassportRepository;
 import ru.cft.shift.repository.UserRepository;
 import ru.cft.shift.utils.PassportChecker;
@@ -21,19 +23,26 @@ public class PassportService {
 
     @Transactional
     public void updatePassportData(String series, String number)
-            throws PassportAlreadyRegisteredException, SmallAgeException, IncorrectPassportException {
+            throws PassportAlreadyRegisteredException, SmallAgeException, IncorrectPassportException, UserNotFoundException {
         checkIsPassportDataFree(series, number);
 
         PassportChecker.checkUserAge(series, number);
         PassportChecker.checkPassportDataExist(series, number);
 
-        userRepository.findByEmail(SecurityContextHelper.email()).ifPresent(
-                currentUser->currentUser
-                        .setPassport(new PassportEntity()
-                                .setSeries(series)
-                                .setNumber(number)
-                                .setId(currentUser.getId())
-                                .setUser(currentUser)));
+        UserEntity user = userRepository.findByEmail(SecurityContextHelper.email()).orElse(null);
+
+        if(user == null){
+            throw new UserNotFoundException();
+        }
+
+        PassportEntity passport = new PassportEntity()
+                .setSeries(series)
+                .setNumber(number)
+                .setId(user.getId())
+                .setUser(user);
+
+        user.setPassport(passport);
+
     }
 
     @Transactional

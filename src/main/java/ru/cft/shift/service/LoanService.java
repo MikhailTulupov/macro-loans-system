@@ -7,6 +7,7 @@ import ru.cft.shift.entity.LoanEntity;
 import ru.cft.shift.entity.UserEntity;
 import ru.cft.shift.exception.LoanNotFoundException;
 import ru.cft.shift.exception.UserNotFoundException;
+import ru.cft.shift.repository.BalanceRepository;
 import ru.cft.shift.repository.LoanRepository;
 import ru.cft.shift.repository.UserRepository;
 import ru.cft.shift.utils.SecurityContextHelper;
@@ -25,6 +26,8 @@ public class LoanService {
     private final LoanRepository loanRepository;
 
     private final UserRepository userRepository;
+
+    private final BalanceRepository balanceRepository;
 
     @Transactional
     public List<LoanDTO> getUserLoans() throws UserNotFoundException {
@@ -72,8 +75,9 @@ public class LoanService {
             throw new LoanNotFoundException();
         }
 
-        loanRepository.setDebtSumByUserId(loanId, user.getId(), sum);
+        user.getBalance().setFunds(user.getBalance().getFunds().subtract(sum));
 
+        loanRepository.setDebtSumByUserId(loanId, user.getId(), sum);
         loan.setDebt(loan.getDebt().subtract(sum));
 
         return LoanDTO.getFromEntity(loan);

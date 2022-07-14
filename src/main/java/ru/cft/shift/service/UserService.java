@@ -10,6 +10,7 @@ import ru.cft.shift.exception.EmailAlreadyRegisteredException;
 import ru.cft.shift.exception.IncorrectPassportException;
 import ru.cft.shift.exception.PassportAlreadyRegisteredException;
 import ru.cft.shift.exception.SmallAgeException;
+import ru.cft.shift.repository.BalanceRepository;
 import ru.cft.shift.repository.PassportRepository;
 import ru.cft.shift.repository.UserRepository;
 import ru.cft.shift.utils.PassportChecker;
@@ -23,7 +24,10 @@ import java.math.BigDecimal;
 public class UserService {
 
     private final UserRepository userRepository;
+
     private final PassportRepository passportRepository;
+
+    private final BalanceRepository balanceRepository;
 
     @Transactional
     public UserDTO createUser(
@@ -41,7 +45,8 @@ public class UserService {
             IncorrectPassportException
     {
         checkEmailIsFree(email);
-        UserEntity user = userRepository.save(new UserEntity(email, password, surname, name, patronymic));
+        UserEntity user = new UserEntity(email, password, surname, name, patronymic);
+        userRepository.save(user);
 
         if(passportNumber != null && passportSeries != null){
             checkIsPassportDataFree(passportSeries, passportNumber);
@@ -49,21 +54,21 @@ public class UserService {
             PassportChecker.checkUserAge(passportSeries, passportNumber);
             PassportChecker.checkPassportDataExist(passportSeries, passportNumber);
 
-            userRepository.findByEmail(SecurityContextHelper.email()).ifPresent(
-                    currentUser->currentUser
-                            .setPassport(new PassportEntity()
-                                    .setSeries(passportSeries)
-                                    .setNumber(passportNumber)
-                                    .setId(currentUser.getId())
-                                    .setUser(currentUser)));
+            PassportEntity passport = new PassportEntity()
+                    .setId(user.getId())
+                    .setUser(user)
+                    .setSeries(passportSeries)
+                    .setNumber(passportNumber);
+
+            user.setPassport(passport);
         }
 
-        userRepository.findByEmail(SecurityContextHelper.email()).ifPresent(
-                currentUser -> currentUser
-                        .setBalance(new BalanceEntity()
-                                .setId(currentUser.getId())
-                                .setUser(currentUser)
-                                .setFunds(new BigDecimal("0.00"))));
+        BalanceEntity balance = new BalanceEntity()
+                .setId(user.getId())
+                .setUser(user)
+                .setFunds(new BigDecimal("0.00"));
+
+        user.setBalance(balance);
 
         return UserDTO.getFromEntity(user);
     }

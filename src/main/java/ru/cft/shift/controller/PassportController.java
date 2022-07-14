@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.cft.shift.exception.IncorrectPassportException;
 import ru.cft.shift.exception.PassportAlreadyRegisteredException;
 import ru.cft.shift.exception.SmallAgeException;
+import ru.cft.shift.exception.UserNotFoundException;
 import ru.cft.shift.service.PassportService;
 
 @Api
@@ -20,7 +21,7 @@ public class PassportController {
     public ResponseEntity<String> setUserPassportData(
             @RequestParam(name = "series") String series,
             @RequestParam(name = "number") String number
-    ) throws IncorrectPassportException, PassportAlreadyRegisteredException, SmallAgeException {
+    ) throws IncorrectPassportException, PassportAlreadyRegisteredException, SmallAgeException, UserNotFoundException {
         passportService.updatePassportData(series, number);
         return ResponseEntity.ok("Successfully added passport data");
     }
