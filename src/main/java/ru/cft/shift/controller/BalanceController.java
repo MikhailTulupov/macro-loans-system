@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.cft.shift.exception.NotEnoughFundsException;
 import ru.cft.shift.service.BalanceService;
 
 import java.math.BigDecimal;
@@ -30,7 +31,7 @@ public class BalanceController {
     @PutMapping("/user/change")
     public ResponseEntity<BigDecimal> changeUserBalance(
             @RequestParam(name = "sum") BigDecimal sum
-    ){
+    ) throws NotEnoughFundsException {
         return ResponseEntity.ok(balanceService.changeUserBalance(sum));
     }
 }

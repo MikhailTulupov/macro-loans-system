@@ -3,9 +3,8 @@ package ru.cft.shift.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.cft.shift.entity.BalanceEntity;
-import ru.cft.shift.entity.UserEntity;
+import ru.cft.shift.exception.NotEnoughFundsException;
 import ru.cft.shift.repository.BalanceRepository;
-import ru.cft.shift.repository.UserRepository;
 import ru.cft.shift.utils.SecurityContextHelper;
 
 import javax.transaction.Transactional;
@@ -27,10 +26,16 @@ public class BalanceService {
     }
 
     @Transactional
-    public BigDecimal changeUserBalance(BigDecimal sum){
+    public BigDecimal changeUserBalance(BigDecimal sum) throws NotEnoughFundsException {
         BalanceEntity balance = balanceRepository.findByUserEmail(SecurityContextHelper.email()).orElse(null);
         if(balance == null){
             return null;
+        }
+
+        if(sum.compareTo(BigDecimal.ZERO) < 0){
+            if(sum.compareTo(balance.getFunds()) > 0){
+                throw new NotEnoughFundsException();
+            }
         }
 
         balance.setFunds(balance.getFunds().add(sum));
