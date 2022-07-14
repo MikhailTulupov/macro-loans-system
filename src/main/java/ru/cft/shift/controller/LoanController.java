@@ -33,10 +33,9 @@ public class LoanController {
     @PostMapping("/user/apply")
     public ResponseEntity<LoanDTO> applyForLoan(
             @RequestParam(name = "debt") BigDecimal debt,
-            @RequestParam(name = "maturity")Instant maturity,
-            @RequestParam(name = "rate") BigDecimal interestRate
+            @RequestParam(name = "maturity")Long maturity
             ) throws UserNotFoundException {
-            return ResponseEntity.ok(loanService.addLoan(debt, maturity, interestRate));
+            return ResponseEntity.ok(loanService.addLoan(debt, maturity));
     }
 
     @PutMapping("/pay/{id}")

@@ -6,9 +6,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.util.Date;
 
 @Entity
 @Table(name = "loans")
@@ -25,13 +24,10 @@ public class LoanEntity {
     private BigDecimal debt;
 
     @Column(name = "date_of_receive", nullable = false)
-    private Instant dateOfReceive;
+    private Date dateOfReceive;
 
     @Column(name = "maturity", nullable = false)
-    private Instant maturity;
-
-    @Column(name = "interest_rate", precision = 4, scale = 2, nullable = false)
-    private BigDecimal interestRate;
+    private Long maturity;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

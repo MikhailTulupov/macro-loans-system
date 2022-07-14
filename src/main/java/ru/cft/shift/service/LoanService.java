@@ -13,6 +13,7 @@ import ru.cft.shift.utils.SecurityContextHelper;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ public class LoanService {
     }
 
     @Transactional
-    public LoanDTO addLoan(BigDecimal debt, Instant maturity, BigDecimal interestRate) throws UserNotFoundException {
+    public LoanDTO addLoan(BigDecimal debt, Long maturity) throws UserNotFoundException {
 
         UserEntity user = userRepository.findByEmail(SecurityContextHelper.email()).orElse(null);
 
@@ -50,8 +51,7 @@ public class LoanService {
                 .setUser(user)
                 .setDebt(debt)
                 .setMaturity(maturity)
-                .setInterestRate(interestRate)
-                .setDateOfReceive(Instant.now());
+                .setDateOfReceive(Date.from(Instant.now()));
 
         user.getLoans().add(loan);
         loanRepository.save(loan);

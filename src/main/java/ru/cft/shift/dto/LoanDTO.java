@@ -9,7 +9,8 @@ import ru.cft.shift.entity.LoanEntity;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -24,20 +25,29 @@ public class LoanDTO {
     private BigDecimal debt;
 
     @NotNull
-    private Instant receiving;
+    private String receiving;
 
     @NotNull
-    private Instant maturity;
+    private Long maturity;
 
     public static LoanDTO getFromEntity(LoanEntity loanEntity){
         if(loanEntity == null){
             return null;
         }
 
+        Date receive = loanEntity.getDateOfReceive();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        try{
+            receive = sdf.parse(sdf.format(receive));
+        }
+        catch (Exception e){
+            System.out.println("Error to convert date, use as it is");
+        }
+
         return new LoanDTO()
                 .setId(loanEntity.getId())
                 .setDebt(loanEntity.getDebt())
-                .setReceiving(loanEntity.getDateOfReceive())
+                .setReceiving(sdf.format(receive))
                 .setMaturity(loanEntity.getMaturity());
     }
 }
